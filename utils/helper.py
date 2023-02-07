@@ -44,11 +44,11 @@ class Helper:
         with open(train_file) as file:
             lines = file.readlines()
             train_image = [line.strip() for line in lines]
+        print(len(train_image))
         all_captions = []
         all_image_paths = []
         for image_id in train_image:
             all_captions.extend(captions_map[image_id])
-            print(image_id)
             all_image_paths.extend([os.path.join(image_dir, image_id)] * len(captions_map[image_id]))
 
         caption_dataset = tf.data.Dataset.from_tensor_slices(all_captions)
