@@ -23,6 +23,7 @@ def map_func(image_path, caption):
 
 @tf.function
 def normalize_caption(input_str):
+    print(type(input_string))
     input_str = tf.strings.lower(input_str)
     
     # Remove special characters and numbers
