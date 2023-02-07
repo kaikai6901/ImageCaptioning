@@ -8,7 +8,6 @@ from tqdm import tqdm
 import pandas as pd
 import time
 
-@tf.function
 def load_image(image_path):
     img = tf.io.read_file(image_path)
     img = tf.io.decode_jpeg(img, channels=3)
@@ -79,7 +78,7 @@ class Helper:
         # Get unique images
         unique_image_paths = sorted(set(all_image_paths))
         image_dataset = tf.data.Dataset.from_tensor_slices(unique_image_paths)
-        image_dataset = image_dataset.map(load_image, num_parallel_calls=tf.data.AUTOTUNE).batch(16)
+        image_dataset = image_dataset.map(lambda x: load_image(x), num_parallel_calls=tf.data.AUTOTUNE).batch(16)
 
         for image, path in tqdm(image_dataset):
             # batch_features shape == (16, 8, 8, 1408) (16 is batch size)
