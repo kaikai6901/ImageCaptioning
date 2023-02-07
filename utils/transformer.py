@@ -256,7 +256,7 @@ class Decoder(tf.keras.layers.Layer):
             emb_dim,
             mask_zero=True
         )
-        self.pos_encoding = positional_encoding_1d(MAX_LENGTH, emb_dim)
+        self.pos_encoding = positional_encoding_1d(config['max_length'], emb_dim)
 
         self.dec_layers = [
             DecoderBlock(

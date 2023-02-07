@@ -27,12 +27,10 @@ class Helper:
     def load_train_data_to_tensor(self, caption_file=None, train_file=None, image_dir=None, cnn_model = None, tokenizer=None):
         if image_dir == None:
             image_dir = config['image_dir']
-            print(image_dir)
 
         captions_map = defaultdict(list)
         if caption_file == None:
             caption_file = config['caption_file']
-            print(caption_file)
 
         with open(caption_file) as file:
             lines = file.readlines()
@@ -43,14 +41,11 @@ class Helper:
                 captions_map[image_id].append(caption)
         if train_file == None:
             train_file = config['train_file']
-            print(train_file)
 
         train_image = []
         with open(train_file) as file:
-            print(lines)
             lines = file.readlines()
             train_image = [line.strip() for line in lines]
-        print(len(train_image))
         all_captions = []
         all_image_paths = []
         for image_id in train_image:
