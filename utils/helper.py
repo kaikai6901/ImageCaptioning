@@ -69,13 +69,12 @@ class Helper:
         # Parameters for tokenizer
 
         # Tokenizer
-        if tokenizer == None:
-            tokenizer = tf.keras.layers.TextVectorization(
-                max_tokens=config['vocab_size'],
-                standardize=normalize_caption,
-                output_sequence_length=config['max_length'])
+        tokenizer = tf.keras.layers.TextVectorization(
+            max_tokens=config['vocab_size'],
+            standardize=normalize_caption,
+            output_sequence_length=config['max_length'])
 
-            tokenizer.adapt(caption_dataset)
+        tokenizer.adapt(caption_dataset)
 
         caption_vectors = caption_dataset.map(lambda x: tokenizer(x))
 
