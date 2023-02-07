@@ -8,7 +8,13 @@ from tqdm import tqdm
 import pandas as pd
 import time
 
-
+@tf.function
+def load_image(image_path):
+    img = tf.io.read_file(image_path)
+    img = tf.io.decode_jpeg(img, channels=3)
+    img = tf.image.resize(img, size=(224, 224))  # EfficientNetB0 expects this input shape
+    img = tf.keras.applications.efficientnet.preprocess_input(img)
+    return img, image_path
 class Helper:        
     def normalize_caption(self, input_str):
         input_str = tf.strings.lower(input_str)
@@ -73,7 +79,7 @@ class Helper:
         # Get unique images
         unique_image_paths = sorted(set(all_image_paths))
         image_dataset = tf.data.Dataset.from_tensor_slices(unique_image_paths)
-        image_dataset = image_dataset.map(self.load_image, num_parallel_calls=tf.data.AUTOTUNE).batch(16)
+        image_dataset = image_dataset.map(load_image, num_parallel_calls=tf.data.AUTOTUNE).batch(16)
 
         for image, path in tqdm(image_dataset):
             # batch_features shape == (16, 8, 8, 1408) (16 is batch size)
@@ -98,12 +104,6 @@ class Helper:
 
         return dataset, tokenizer   
     # store the features to a numpy file
-    def load_image(self, image_path):
-        img = tf.io.read_file(image_path)
-        img = tf.io.decode_jpeg(img, channels=3)
-        img = tf.image.resize(img, size=(224, 224))  # EfficientNetB0 expects this input shape
-        img = tf.keras.applications.efficientnet.preprocess_input(img)
-        return img, image_path
     
     def map_func(self, image_path, caption):
         path = image_path.decode('utf-8') + '.npy'
