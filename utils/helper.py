@@ -24,7 +24,9 @@ class Helper:
         
         return input_str
 
-    def load_train_data_to_tensor(self, caption_file=None, train_file=None, image_dir=None, cnn_model = None, tokenizer=None):
+    def load_train_data_to_tensor(self, caption_file=None, train_file=None, image_dir=None, cnn_model = None, tokenizer=None ,preprocessor=None):
+        if preprocessor == None:
+            preprocessor = tf.keras.applications.efficientnet.preprocess_input
         if image_dir == None:
             image_dir = config['image_dir']
 
@@ -98,7 +100,7 @@ class Helper:
 
         return dataset, tokenizer   
     # store the features to a numpy file
-    def load_image(self, image_path, size=(260, 260), preprocessor=tf.keras.applications.EfficientNetB0):
+    def load_image(self, image_path, size=(260, 260), preprocessor=preprocessor):
         img = tf.io.read_file(image_path)
         img = tf.io.decode_jpeg(img, channels=3)
         img = tf.image.resize(img, size)  # EfficientNetB2 expects this input shape
