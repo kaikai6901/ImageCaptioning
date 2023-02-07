@@ -7,32 +7,35 @@ import numpy as np
 from tqdm import tqdm
 import pandas as pd
 import time
-
+@tf.function
 def load_image(image_path):
     img = tf.io.read_file(image_path)
     img = tf.io.decode_jpeg(img, channels=3)
     img = tf.image.resize(img, size=(224, 224))  # EfficientNetB0 expects this input shape
     img = tf.keras.applications.efficientnet.preprocess_input(img)
     return img, image_path
+
+@tf.function
 def map_func(image_path, caption):
     path = image_path.decode('utf-8') + '.npy'
     img_tensor = np.load(path)
     return img_tensor, caption
-class Helper:        
-    def normalize_caption(self, input_str):
-        input_str = tf.strings.lower(input_str)
-        
-        # Remove special characters and numbers
-        input_str = tf.strings.regex_replace(input_str, pattern='[^a-z\s]+', rewrite='')
-        
-        # Strip leading and trailing whitespaces
-        input_str = tf.strings.strip(input_str)
-        
-        # Replace tabs with spaces
-        input_str = tf.strings.regex_replace(input_str, pattern='\t', rewrite=' ')
-        
-        return input_str
 
+@tf.function
+def normalize_caption(input_str):
+    input_str = tf.strings.lower(input_str)
+    
+    # Remove special characters and numbers
+    input_str = tf.strings.regex_replace(input_str, pattern='[^a-z\s]+', rewrite='')
+    
+    # Strip leading and trailing whitespaces
+    input_str = tf.strings.strip(input_str)
+    
+    # Replace tabs with spaces
+    input_str = tf.strings.regex_replace(input_str, pattern='\t', rewrite=' ')
+    
+    return input_str
+class Helper:        
     def load_train_data_to_tensor(self, caption_file=None, train_file=None, image_dir=None, cnn_model = None, tokenizer=None):
         if image_dir == None:
             image_dir = config['image_dir']
@@ -69,7 +72,7 @@ class Helper:
         if tokenizer == None:
             tokenizer = tf.keras.layers.TextVectorization(
                 max_tokens=config['vocab_size'],
-                standardize=self.normalize_caption,
+                standardize=normalize_caption,
                 output_sequence_length=config['max_length'])
 
             tokenizer.adapt(caption_dataset)
