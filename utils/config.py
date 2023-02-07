@@ -2,7 +2,7 @@ config = {
     'start_seq' : '<startseq>',
     'end_seq' :'<endseq>',
     'unknown' : '[UNK]',
-    'image_dir' : '../input/flickr8k',
+    'image_dir' : '../input/flickr8k/Images',
     'caption_file' : '../input/flickr8k/captions.txt',
     'train_file' : './ImageCaptioning/data/train_image.txt',
     'test_file' : './ImageCaptioning/data/test_image.txt',

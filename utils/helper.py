@@ -39,6 +39,8 @@ class Helper:
                 captions_map[image_id].append(caption)
         if train_file == None:
             train_file = config['train_file']
+
+        train_image = []
         with open(train_file) as file:
             lines = file.readlines()
             train_image = [line.strip() for line in lines]
