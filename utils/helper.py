@@ -98,10 +98,10 @@ class Helper:
 
         return dataset, tokenizer   
     # store the features to a numpy file
-    def load_image(self, image_path, size=(224, 224)):
+    def load_image(self, image_path):
         img = tf.io.read_file(image_path)
         img = tf.io.decode_jpeg(img, channels=3)
-        img = tf.image.resize(img, size)  # EfficientNetB0 expects this input shape
+        img = tf.image.resize(img, size=(224, 224))  # EfficientNetB0 expects this input shape
         img = tf.keras.applications.efficientnet.preprocess_input(img)
         return img, image_path
     
