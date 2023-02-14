@@ -158,4 +158,12 @@ class Model():
 
         attention_plot = attention_plot[:len(result), :]
         return result, attention_plot,predictions
-
+        
+    def generate(self,image_path):
+        if "https://" in image_path:
+            image_extension = image_path[-4:]
+            image_path = tf.keras.utils.get_file('image' + image_extension, origin=image_path)
+        result = self.evaluate(image_path)[0]
+        print("Caption: " + " ".join(result))
+        plt.imshow(plt.imread(image_path))
+        plt.show()
