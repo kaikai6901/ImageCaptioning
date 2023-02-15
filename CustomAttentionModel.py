@@ -72,7 +72,7 @@ class CustomAttentionModel():
         self.encoder=Custom_Encoder(embedded_dim)
         self.decoder=Custom_Decoder(embedded_dim, units, vocab_length)
         self.word_to_index, self.index_to_word = get_text_transfrom()
-        self.optimizer = tf.keras.optimizers.Adam(learning_rate = lr) 
+        self.optimizer = tf.keras.optimizers.legacy.Adam(learning_rate = lr) 
         self.extraction_model = get_extraction_model()
         ## EfficientB3
         self.feature_shape = 1536
