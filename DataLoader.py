@@ -99,3 +99,12 @@ def get_image_to_cap():
             cap = start_seq + ' ' + ' '.join(data[1:]).strip() + ' ' + end_seq
             img_to_cap[image].append(cap)
     return img_to_cap
+
+def get_caption_dataset(img_to_cap):
+    list_img_path = []
+    list_cap = []
+    for img in img_to_cap:
+      list_cap.extend(img_to_cap[img])
+      list_img_path.extend([image_dir + '/' + img] * len(img_to_cap[img]))
+    cap_tf_dataset = tf.data.Dataset.from_tensor_slices(list_cap)
+    return cap_tf_dataset, list_img_path
