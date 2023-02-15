@@ -77,7 +77,7 @@ class CustomEncoderBlock(tf.keras.layers.Layer):
         super(CustomEncoderBlock, self).__init__()
         self.MHA = tf.keras.layers.MultiHeadAttention(num_heads=number_heads, key_dim=embedded_dim, dropout=drop_rate)
 
-        self.FeedForward = point_wise_ffn(embedded_dim=embedded_dim, fc_dim=fc_dims)
+        self.FeedForward = point_wise_ffn(embedded_dim=embedded_dim, fc_dims=fc_dims)
 
         self.CustomLayerNorm1 = tf.keras.layers.LayerNormalization(epsilon=layernorm_eps)
         self.CustomLayerNorm2 = tf.keras.layers.LayerNormalization(epsilon=layernorm_eps)
@@ -257,19 +257,19 @@ class CustomDecoder(tf.keras.layers.Layer):
         return data, att_weights
 
 class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
-    def __init__(self, dim_model, warmup_step=4000):
-        super(CustomDecoder, self).__init__()
+    def __init__(self, d_model, warmup_steps=4000):
+        super(CustomSchedule, self).__init__()
 
-        self.dim_model = dim_model
-        self.dim_model = tf.cast(self.dim_model, tf.float32)
+        self.d_model = d_model
+        self.d_model = tf.cast(self.d_model, tf.float32)
 
-        self.warmup_step = warmup_step
+        self.warmup_steps = warmup_steps
 
     def __call__(self, step):
         arg1 = tf.math.rsqrt(step)
-        arg2 = step * (self.warmup_step ** -1.5)
+        arg2 = step * (self.warmup_steps ** -1.5)
 
-        return tf.math.rsqrt(self.dim_model) * tf.math.minimum(arg1, arg2)
+        return tf.cast(tf.math.rsqrt(self.d_model) * tf.math.minimum(arg1, arg2), tf.float32)
 
 def loss_function(real, pred):
     mask = tf.math.logical_not(tf.math.equal(real, 0))
@@ -320,8 +320,8 @@ class CustomTransformer(tf.keras.Model):
         
         self.output_layer = tf.keras.layers.Dense(vocab_length)
 
-        self.learning_rate = CustomSchedule(embedded_dim)
-        self.optimizer = tf.keras.optimizers.Adam(self.learning_rate, beta1=0.9, beta2=0.98, epsilon=1e-9)
+        learning_rate = CustomSchedule(embedded_dim)
+        self.optimizer = tf.keras.optimizers.Adam(0.001, beta_1=0.9, beta_2=0.98, epsilon=1e-9)
         self.train_loss = tf.keras.metrics.Mean(name='train_loss')
 
     def call(self, input, output, is_training, encode_padding_mask, look_ahead_mask, decode_padding_mask):
