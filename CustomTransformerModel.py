@@ -73,9 +73,9 @@ def point_wise_ffn(
     ])
 
 class CustomEncoderBlock(tf.keras.layers.Layer):
-    def __init__(self, embedded_dim, n_heads, fc_dims, drop_rate=0.1, layernorm_eps=1e-6):
+    def __init__(self, embedded_dim, number_heads, fc_dims, drop_rate=0.1, layernorm_eps=1e-6):
         super(CustomEncoderBlock, self).__init__()
-        self.MHA = tf.keras.layers.MultiHeadAttention(num_heads=n_heads, key_dim=embedded_dim, dropout=drop_rate)
+        self.MHA = tf.keras.layers.MultiHeadAttention(num_heads=number_heads, key_dim=embedded_dim, dropout=drop_rate)
 
         self.FeedForward = point_wise_ffn(embedded_dim=embedded_dim, fc_dim=fc_dims)
 
@@ -334,14 +334,14 @@ class CustomTransformer(tf.keras.Model):
         return final_output, att_weights
     @tf.function
     def train_step(self, input, output):
-        target_inp = output[:, :-1]
+        target_input = output[:, :-1]
         true_value = output[:, 1:]
 
         look_ahead_mask = make_look_ahead_mask()
         decode_padding_mask = None
         
         with tf.GradientTape() as tape:
-            predictions, _ = self.call(input, )
+            predictions, _ = self.call(input, target_input, True, None, look_ahead_mask, decode_padding_mask)
             loss = loss_function(true_value, predictions)
         
         gradients = tape.gradient(loss, self.trainable_variables)
