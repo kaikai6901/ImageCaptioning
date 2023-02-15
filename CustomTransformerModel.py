@@ -188,7 +188,7 @@ class CustomDecoderBlock(tf.keras.layers.Layer):
             query=output, 
             value=output_encoder,
             key=output_encoder,
-            attetion_mask=padding_mask,
+            attention_mask=padding_mask,
             return_attention_scores=True,
             training=is_training
         )
@@ -216,7 +216,7 @@ class CustomDecoder(tf.keras.layers.Layer):
         super(CustomDecoder, self).__init__()
 
         self.embedded_dim = embedded_dim
-        self.number_layers = number_layers,
+        self.number_layers = number_layers
 
         self.CustomEmbeddingLayer = tf.keras.layers.Embedding(
             vocab_length,
@@ -302,7 +302,6 @@ class CustomTransformer(tf.keras.Model):
             number_heads=number_heads,
             fc_dims=fc_dims,
             row=row,
-
             col=col,
             drop_rate=drop_rate,
             layernorm_eps=layernorm_eps
