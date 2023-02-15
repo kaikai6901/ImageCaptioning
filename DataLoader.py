@@ -78,4 +78,24 @@ def get_extraction_model():
     extraction_model = tf.compat.v1.keras.Model(
         img_input, hidden_layer)
     return extraction_model
+def get_train_test():
+    train_image = []
+    with open(train_image_path)as file:
+        lines = file.readlines()
+        train_image = [os.path.join(image_dir, line.strip()) for line in lines]
+    test_image = []
+    with open(test_image_path) as file:
+        lines = file.readlines()
+        test_image = [os.path.join(image_dir, line.strip()) for line in lines]
+    return train_image, test_image
 
+def get_image_to_cap():
+    img_to_cap = defaultdict(list)
+    with open(captions_path) as file:
+        lines = file.readlines()
+        for line in lines[1:]:
+            data = line.split(',')
+            image = data[0]
+            cap = start_seq + ' ' + ' '.join(data[1:]).strip() + ' ' + end_seq
+            img_to_cap[image].append(cap)
+    return img_to_cap
