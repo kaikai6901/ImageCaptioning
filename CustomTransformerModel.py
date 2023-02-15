@@ -337,7 +337,7 @@ class CustomTransformer(tf.keras.Model):
         target_input = output[:, :-1]
         true_value = output[:, 1:]
 
-        look_ahead_mask = make_look_ahead_mask()
+        look_ahead_mask = make_look_ahead_mask(tf.shape(target_input)[1])
         decode_padding_mask = None
         
         with tf.GradientTape() as tape:
